@@ -11,6 +11,7 @@ export default class AppFood extends Component{
     this.state = {
       dataBanner:[],
       categories:[],
+      foods:[],
       selectedCategory: 0
     }
   }
@@ -23,7 +24,8 @@ export default class AppFood extends Component{
       this.setState({
         isLoading:false,
         dataBanner: responseJson.banner,
-        categories : responseJson.categories
+        categories : responseJson.categories,
+        foods : responseJson.food
       });
     })
     .catch((error) => {
@@ -55,19 +57,52 @@ render(){
 
 
       <View style={{width:width, borderRadius:20, paddingVertical:20, backgroundColor:'white'}}>
+
       <Text style={styles.titleCategory} >Categories {this.state.selectedCategory}</Text>
-        <FlatList horizontal={true} data={this.state.categories}
-          renderItem={({item})=> this._renderItem(item)}
+        <FlatList
+          horizontal={true}
+          data={this.state.categories}
+          renderItem={({item})=> this._renderItemCategories(item)}
           keyExtractor = {(item,index) => index.toString()}
           />
+
+        <Text style={styles.titleCategory} >Foods List</Text>
+        <FlatList
+          data={this.state.foods}
+          numColumns={2}
+          renderItem={({item})=> this._renderItemFoods(item)}
+          keyExtractor={(item,index) => index.toString()}
+          />
+
       </View>
 
+      <Text>{JSON.stringify(this.state.foods)}</Text>
     </View>
     </ScrollView>
   );
 }
+// ===================================== RENDER DATA ================================== //
+_renderItemFoods(item){
+  let cate = this.state.selectedCategory;
+  if (cate == 0 || cate == item.categorie){
+    return(
+        <TouchableOpacity style={styles.divFood}>
+          <Image
+            style={styles.imageFood}
+            resizeMode="contain"
+            source={{uri:item.image}} />
+            <View style={{height:((width/2)-20)-200, backgroundColor:'transparent', width:((width/2)-20)-10}} />
+            <Text style={{fontWeight:'bold',fontSize:15,textAlign:'center'}}>
+              {item.name}
+            </Text>
+            <Text>Descp Details</Text>
+            <Text style={{fontSize:20,color:"green"}}>${item.price}</Text>
+          </TouchableOpacity>
+        )
+  }
+}
 
-_renderItem(item){
+_renderItemCategories(item){
   return(
     <TouchableOpacity style={[styles.divCategory,{backgroundColor:item.color}]}
       onPress={()=>this.setState({selectedCategory:item.id})}>
@@ -115,4 +150,23 @@ const styles = StyleSheet.create({
     borderRadius:10,
     padding:10
   },
+  imageFood:{
+    width : ((width/2) - 20)-10,
+    height : ((width/2) - 20)-30,
+    backgroundColor:'transparent'
+  },
+  divFood:{
+    width:(width/2)-20,
+    // height:(width/2),
+    padding:10,
+    borderRadius:5,
+    marginTop:20,
+    marginBottom:0,
+    marginLeft:12,
+    alignItems:'center',
+    elevation:8,
+    shadowOpacity:0.3,
+    shadowRadius:50,
+    backgroundColor:'white'
+  }
 });
