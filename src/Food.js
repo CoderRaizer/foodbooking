@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {StyleSheet,Text,View,FlatList,Dimensions,ScrollView,TextInput,TouchableOpacity, Image} from 'react-native';
 import Swiper from 'react-native-swiper';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { AsyncStorage } from 'react-native';
 
 var {height , width} = Dimensions.get("window");
 
@@ -58,7 +60,7 @@ render(){
 
       <View style={{width:width, borderRadius:20, paddingVertical:20, backgroundColor:'white'}}>
 
-      <Text style={styles.titleCategory} >Categories {this.state.selectedCategory}</Text>
+      <View style={{height:5}} />
         <FlatList
           horizontal={true}
           data={this.state.categories}
@@ -80,7 +82,9 @@ render(){
     </ScrollView>
   );
 }
-// ===================================== RENDER DATA ================================== //
+// ===================================== METHOD ================================== //
+
+
 _renderItemFoods(item){
   let cate = this.state.selectedCategory;
   if (cate == 0 || cate == item.categorie){
@@ -96,6 +100,23 @@ _renderItemFoods(item){
             </Text>
             <Text>Descp Details</Text>
             <Text style={{fontSize:20,color:"green"}}>${item.price}</Text>
+
+            <TouchableOpacity
+            onPress={()=>this.onClickAddCart(item)}
+              style={{
+                width:(width/2)-40,
+                backgroundColor:'#33c37d',
+                flexDirection:'row',
+                alignItems:'center',
+                justifyContent:"center",
+                borderRadius:5,
+                padding:4
+                }}>
+            <Text style={{fontSize:18, color:"white", fontWeight:"bold"}}>Add Cart</Text>
+             <View style={{width:10}} />
+             <Icon name="ios-add-circle" size={30} color={"black"} />
+            </TouchableOpacity>
+
           </TouchableOpacity>
         )
   }
@@ -111,7 +132,34 @@ _renderItemCategories(item){
   )
 }
 
+onClickAddCart(data){
+
+ const itemcart = {
+   food: data,
+   quantity:  1,
+   price: data.price
+ }
+
+ AsyncStorage.getItem('cart').then((datacart)=>{
+     if (datacart !== null) {
+       // We have data!!
+       const cart = JSON.parse(datacart)
+       cart.push(itemcart)
+       AsyncStorage.setItem('cart',JSON.stringify(cart));
+     }
+     else{
+       const cart  = []
+       cart.push(itemcart)
+       AsyncStorage.setItem('cart',JSON.stringify(cart));
+     }
+     alert("Add Cart")
+   })
+   .catch((err)=>{
+     alert(err)
+   })
 }
+
+}// END CLASS
 
 // =============== STYLE =============== //
 const styles = StyleSheet.create({
