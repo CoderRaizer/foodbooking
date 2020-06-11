@@ -61,6 +61,7 @@ render(){
       <View style={{width:width, borderRadius:20, paddingVertical:20, backgroundColor:'white'}}>
 
       <View style={{height:5}} />
+      <Text style={styles.titleCategory} >Danh Mục</Text>
         <FlatList
           horizontal={true}
           data={this.state.categories}
@@ -68,7 +69,7 @@ render(){
           keyExtractor = {(item,index) => index.toString()}
           />
 
-        <Text style={styles.titleCategory} >Foods List</Text>
+        <Text style={styles.titleCategory} >Danh Sách Thực Đơn</Text>
         <FlatList
           data={this.state.foods}
           numColumns={2}
@@ -98,7 +99,7 @@ _renderItemFoods(item){
             <Text style={{fontWeight:'bold',fontSize:15,textAlign:'center'}}>
               {item.name}
             </Text>
-            <Text>Descp Details</Text>
+            <Text>Mô tả đang trống</Text>
             <Text style={{fontSize:20,color:"green"}}>${item.price}</Text>
 
             <TouchableOpacity
@@ -116,7 +117,6 @@ _renderItemFoods(item){
              <View style={{width:10}} />
              <Icon name="ios-add-circle" size={30} color={"black"} />
             </TouchableOpacity>
-
           </TouchableOpacity>
         )
   }
