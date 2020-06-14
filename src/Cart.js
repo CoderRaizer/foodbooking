@@ -92,7 +92,7 @@ export default class Cart extends Component {
                this.state.dataCart.map((item,i)=>{
                  return(
                    <View style={{width:width-20,margin:10,backgroundColor:'transparent', flexDirection:'row', borderBottomWidth:2, borderColor:"#cccccc", paddingBottom:10}}>
-                     <Image resizeMode={"contain"} style={{width:width/3,height:width/3}} source={{uri: item.food.image}} />
+                     <Image resizeMode={"contain"} style={{width:width/3,height:width/3}} source={{uri: item.food.pathImage}} />
                      <View style={{flex:1, backgroundColor:'trangraysparent', padding:10, justifyContent:"space-between"}}>
                        <View>
                          <Text style={{fontWeight:"bold", fontSize:20}}>{item.food.name}</Text>
