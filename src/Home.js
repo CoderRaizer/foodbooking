@@ -15,6 +15,7 @@ import Cart from "./Cart";
 import Food from "./Food";
 import Profile from "./Profile";
 
+import { AsyncStorage } from "react-native";
 var { width } = Dimensions.get("window");
 console.disableYellowBox = true;
 
@@ -27,12 +28,6 @@ export default class Home extends Component {
     };
   }
 
-  // componentDidMount() {
-  //   const data = this.props.navigation.getParam("data", "some default value");
-  //   this.setState({
-  //     username: data,
-  //   });
-  // }
 
   render() {
     return (

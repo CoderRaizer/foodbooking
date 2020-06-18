@@ -6,75 +6,128 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Dimensions,
+  Animated,
   Keyboard,
   StyleSheet,
+  ImageBackground,
+  Image,
 } from "react-native";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import ValidationComponent from "react-native-form-validator";
 import { AsyncStorage } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 
 var { height, width } = Dimensions.get("window");
 export default class login extends ValidationComponent {
+  static navigationOptions = {
+    header: null,
+  };
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
+      email: "",
       password: "",
-      // user: {},
+      error: "",
+      backgroundColorError: "",
+      secureTextEntry: true,
+      nameIcon: "md-eye",
+      foodbooking: new Animated.Value(0),
     };
   }
-// 'Content-Type': 'text/plain;charset=UTF-8',
-  login = () => {
-    this.validate({
-      username: { minlength: 3, maxlength: 7, required: true },
-    });
-    fetch("http://9e603c3c61f4.ngrok.io/api/auth/login-mobile", {
-      method: "POST",
-      headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-      // header: {
-      //   'Accept': 'application/json',
-      //   'Content-Type': 'application/json',
-      // },
-      body: JSON.stringify({
-        // username: this.state.username,
-        // password: this.state.password,
-        username: "vonhuphu@gmail.com",
-        password: "123456"
+  async componentDidMount() {
+    Animated.sequence([
+      Animated.timing(this.state.foodbooking, {
+        toValue: 30,
+        duration: 1000,
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        
-        const user = data.data;
-        AsyncStorage.setItem("User",JSON.stringify(user));
-        this.props.navigation.navigate("home");
-        console.log(user);
+    ]).start(() => {
+      // this.props.navigation.navigate('login');
+    });
+  }
+  // 'Content-Type': 'text/plain;charset=UTF-8',
+  login() {
+    AsyncStorage.clear();
+    this.setState({
+      errorEmail: "",
+      errorPassword: "",
+      backgroundColorError: "",
+    });
+    // const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    // if (this.state.email.trim().length < 10) {
+    //   this.setState({
+    //     error: "Email phải lớn hơn 10 ký tự",
+    //     backgroundColorError: "black",
+    //   });
+    // } else if (reg.test(this.state.email) !== true) {
+    //   this.setState({
+    //     error: "*Định dạng email không hợp lệ*",
+    //     backgroundColorError: "black",
+    //   });
+    // } else if (
+    //   this.state.password.trim().length < 6 ||
+    //   this.state.password.trim().length > 20
+    // ) {
+    //   this.setState({
+    //     error: "Mật khẩu từ 6 - 20 ký tự",
+    //     backgroundColorError: "black",
+    //   });
+    // } else {
+      fetch("http://dae38e3f286c.ngrok.io/api/auth/login-mobile", {
+        method: "POST",
+        headers: {
+          Accept: "application/json, text/plain",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        // header: {
+        //   'Accept': 'application/json',
+        //   'Content-Type': 'application/json',
+        // },
+        body: JSON.stringify({
+          // username: this.state.username,
+          // password: this.state.password,
+          email: "vonhuphu@gmail.com",
+          password: "123456",
+        }),
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      })
-      .done();
-      
-  };
+        .then((response) => response.json())
+        .then((data) => {
+          const user = data.data;
+          AsyncStorage.setItem("User", JSON.stringify(user));
+          this.props.navigation.navigate("home");
+          console.log(user);
+        })
+        .catch((error) => {
+          this.setState({
+            error: "Tài khoản hoặc mật khẩu không đúng",
+            backgroundColorError: "black",
+          });
+        })
+        .done();
+    // }
+  }
   _kiemtra = () => {
-    if (this.state.userName == "a" && this.state.password == "a") {
-      this.props.navigation.navigate("demo", {
-        data: "this.state.userName",
-      });
-      // alert("ok");
-      // this.props.navigation.navigate("home");
+    if (this.state.email == "a" && this.state.password == "a") {
+      this.props.navigation.navigate("home");
     } else {
-      // if (this.state.userName == this.state.dataCategories.id) {
-      //   alert('okx2');
-      // } else {
-      //   alert('not ok' + this.state.dataCategories[1].id);
-      // }
+      alert("okx2");
     }
   };
+  _register() {
+    this.props.navigation.navigate("register");
+  }
+  _hidePass() {
+    var name = "";
+    if (this.state.nameIcon == "md-eye") {
+      name = "md-eye-off";
+    } else {
+      name = "md-eye";
+    }
+    this.setState({
+      secureTextEntry: !this.state.secureTextEntry,
+      nameIcon: name,
+    });
+  }
   render() {
     const Divider = (props) => {
       return (
@@ -89,39 +142,102 @@ export default class login extends ValidationComponent {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <View style={styles.up}>
-            {/* <Image style={styles.image} resizeMode="contain" source={require("../image/grab.png")} /> */}
-          </View>
-          <View style={styles.down}>
-            <View style={styles.inputcomponent}>
-              <TextInput
-                style={styles.input}
-                TextContentType="emaiAddress"
-                keyboardType="email-address"
-                placeholder="Nhập email"
-                onChangeText={(text) => this.setState({ username: text })}
-              ></TextInput>
+          <ImageBackground
+            // resizeMode="contain"
+            source={require("./image/food2.png")}
+            style={styles.imageNen}
+          >
+            <View style={styles.up}>
+              <Image
+                style={styles.image}
+                // resizeMode="contain"
+                source={require("./image/grab.png")}
+              />
+              <Animated.Text
+                style={{ ...styles.title, marginLeft: this.state.foodbooking }}
+              >
+                Welcome to Foodbooking
+              </Animated.Text>
             </View>
-            <View style={styles.inputcomponent}>
-              <TextInput
-                style={styles.input}
-                placeholder="Nhập mật khẩu"
-                secureTextEntry={true}
-                onChangeText={(text) => this.setState({ password: text })}
-              ></TextInput>
-            </View>
-            <TouchableOpacity style={styles.btnLogin} onPress={this.login}>
-              <Text style={styles.login}>Login</Text>
-            </TouchableOpacity>
-            <Divider style={styles.devider}></Divider>
+            <View style={styles.down}>
+              <View>
+                <Text
+                  style={{
+                    color: "red",
+                    fontStyle: "italic",
+                    fontSize: 18,
+                    backgroundColor: this.state.backgroundColorError,
+                    marginBottom: 10,
+                    padding: 5,
+                    paddingLeft: 15,
+                    paddingRight: 15,
+                    borderRadius: 20,
+                  }}
+                >
+                  {this.state.error}
+                </Text>
+              </View>
+              <View style={styles.inputcomponent}>
+                {/* <Text style={styles.label}>Email: </Text> */}
+                <TextInput
+                  style={styles.input}
+                  TextContentType="emaiAddress"
+                  keyboardType="email-address"
+                  placeholder="Nhập email"
+                  onChangeText={(text) => this.setState({ email: text })}
+                ></TextInput>
+              </View>
+              <View style={styles.inputcomponent}>
+                {/* <Text style={styles.label}>Password: </Text> */}
+                <View
+                  style={{
+                    ...styles.input,
+                    flexDirection: "row",
+                  }}
+                >
+                  <TextInput
+                    style={{ flex: 9 }}
+                    placeholder="Nhập mật khẩu"
+                    secureTextEntry={this.state.secureTextEntry}
+                    onChangeText={(text) => this.setState({ password: text })}
+                  ></TextInput>
+                  <TouchableOpacity
+                    onPress={() => this._hidePass()}
+                    style={{ flex: 1, top: 10 }}
+                  >
+                    <Icon
+                      name={this.state.nameIcon}
+                      size={20}
+                      color={"black"}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.btnLogin}
+                onPress={() => this.login()}
+              >
+                <Text style={styles.login}>Login</Text>
+              </TouchableOpacity>
+              {/* <Divider style={styles.devider}></Divider>
             <FontAwesome.Button
               name="facebook"
               backgroundColor="#3b5998"
               style={styles.facebook}
             >
               <Text style={styles.btnFB}>Login with Facebook</Text>
-            </FontAwesome.Button>
-          </View>
+            </FontAwesome.Button> */}
+              <TouchableOpacity
+                style={{
+                  ...styles.btnLogin,
+                  backgroundColor: "#661a00",
+                }}
+                onPress={() => this._register()}
+              >
+                <Text style={styles.login}>Register</Text>
+              </TouchableOpacity>
+            </View>
+          </ImageBackground>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -139,24 +255,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
+    backgroundColor: "#fff",
+    marginTop: 30,
     height: 100,
-    width: width,
-    margin: 5,
+    width: 100,
+    borderRadius: 50,
+  },
+  imageNen: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
+
+  title: {
+    color: "blue",
+    marginTop: 10,
+    fontSize: 25,
   },
   up: {
     flex: 4,
+    alignItems: "center",
   },
   down: {
     flex: 6,
     justifyContent: "flex-start",
     alignItems: "center",
   },
+  inputcomponent: {
+    flexDirection: "row",
+    marginLeft: 10,
+  },
+  label: {
+    padding: 10,
+    flex: 3,
+    fontSize: 15,
+    textAlign: "right",
+  },
   input: {
-    width: 350,
+    paddingLeft: 10,
+    width: width - 40,
     height: 45,
     backgroundColor: "#fff",
     marginBottom: 10,
     borderRadius: 5,
+    marginRight: 15,
   },
   titleLogin: {
     fontSize: 20,
@@ -170,10 +312,11 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   btnLogin: {
+    marginTop: 20,
     width: 280,
     height: 45,
-    backgroundColor: "black",
-    borderRadius: 5,
+    backgroundColor: "red",
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },

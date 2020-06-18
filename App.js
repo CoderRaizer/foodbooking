@@ -16,9 +16,8 @@ import Cart from "./src/Cart";
 import Food from "./src/Food";
 import Address from "./src/Address";
 import Profile from "./src/Profile";
-
-
-import Sample from "./src/demo";
+import Register from "./src/Register";
+import Splash from "./src/Splash";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -26,12 +25,18 @@ const Stack = createStackNavigator();
 
 var { width } = Dimensions.get("window");
 console.disableYellowBox = true;
-
 export default class App extends Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="login">
+        <Stack.Navigator initialRouteName="splash">
+        
+          <Stack.Screen
+            style={{ backgroundColor: "black" }}
+            name="splash"
+            component={Splash}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             style={{ backgroundColor: "black" }}
             name="login"
@@ -39,13 +44,13 @@ export default class App extends Component {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="home"
-            component={Home}
+            name="register"
+            component={Register}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="demo"
-            component={Sample}
+            name="home"
+            component={Home}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

@@ -14,10 +14,14 @@ export default class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userData: {},
+      _idUser: "",
+      user: {},
       name: "",
       phone: "",
       address: "",
+      errorName: "",
+      errorPhone: "",
+      errorAddress: "",
     };
   }
 
@@ -28,189 +32,213 @@ export default class Profile extends Component {
         if (user !== null) {
           // We have data!!
           const userdata = JSON.parse(user);
-          this.setState({ userData: userdata });
-          this.state.name = this.state.userData.name;
-          this.state.phone = userdata.phone;
-          this.state.address = userdata.address;
+          // TODO : Danger zone
+          fetch("https://dae38e3f286c.ngrok.io/api/access/user/" + userdata._id)
+            .then((response) => response.json())
+            .then((responseJson) => {
+              this.setState({
+                isLoading: false,
+                user: responseJson.data,
+
+                name: responseJson.data.name,
+                phone: responseJson.data.phone,
+                address: responseJson.data.address,
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          console.log(this.state.userData);
         }
       })
       .catch((err) => {
         alert(err);
       });
+    // TODO : Fetch Data User From DataBase
   }
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          // width: width - 20,
-          // margin: 10,
-          backgroundColor: "transparent",
-          flexDirection: "row",
-          borderBottomWidth: 2,
-          borderColor: "#cccccc",
-          paddingBottom: 10,
-        }}
-      >
-        <View
+      <View style={styles.container}>
+        <Text
           style={{
-            flex: 1,
-            backgroundColor: "trangraysparent",
-            padding: 10,
-            justifyContent: "center",
+            fontSize: 25,
+            color: "red",
+            textAlign: "center",
+            fontWeight: "bold",
+            margin: 10,
           }}
         >
-          <View style={styles.inputcomponent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Nhập mật khẩu"
-              // secureTextEntry={true}
-              // onChangeText={(text) => this.setState({ password: text })}
-              value={this.state.userData.email}
-            ></TextInput>
+          Personal information
+        </Text>
+        <View style={styles.inputcomponent}>
+          <Text style={styles.label}>Email: </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            value={this.state.user.email}
+            editable={false}
+          ></TextInput>
+        </View>
+        <View style={styles.inputcomponent}>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.label}>Name: </Text>
+            <Text style={styles.textError}>{this.state.errorName}</Text>
           </View>
-          <View style={styles.inputcomponent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Nhập mật khẩu"
-              // secureTextEntry={true}
-              value={this.state.userData.name}
-              // onChangeText={(text) => this.setState({ name: text })}
-            ></TextInput>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your name"
+            onChangeText={(text) => this.setState({ name: text })}
+            value={this.state.name}
+            onSubmitEditing={() => {
+              this.secondTextInput.focus();
+            }}
+            // blurOnSubmit={false}
+          ></TextInput>
+        </View>
+        <View style={styles.inputcomponent}>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.label}>Phone: </Text>
+            <Text style={styles.textError}>{this.state.errorPhone}</Text>
           </View>
-          <View style={styles.inputcomponent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Nhập mật khẩu"
-              // secureTextEntry={true}
-              value={this.state.phone}
-              onChangeText={(text) => this.setState({ phone: text })}
-            ></TextInput>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your phone"
+            onChangeText={(text) => this.setState({ phone: text })}
+            value={this.state.phone}
+            ref={(input) => {
+              this.secondTextInput = input;
+            }}
+            onSubmitEditing={() => {
+              this.thirdTextInput.focus();
+            }}
+            // blurOnSubmit={false}
+          ></TextInput>
+        </View>
+        <View style={styles.inputcomponent}>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.label}>Address: </Text>
+            <Text style={styles.textError}>{this.state.errorAddress}</Text>
           </View>
-          <View style={styles.inputcomponent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Nhập mật khẩu"
-              // secureTextEntry={true}
-              value={this.state.address}
-              onChangeText={(text) => this.setState({ address: text })}
-            ></TextInput>
-          </View>
-          <TouchableOpacity
-            onpress={this._updateInfo()}
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your address"
+            onChangeText={(text) => this.setState({ address: text })}
+            value={this.state.address}
+            ref={(input) => {
+              this.thirdTextInput = input;
+            }}
+          ></TextInput>
+        </View>
+        <TouchableOpacity
+          onPress={() => this._updateInfo()}
+          style={{
+            backgroundColor: "#990099",
+            width: width - 60,
+            alignItems: "center",
+            padding: 10,
+            height: 50,
+            borderRadius: 25,
+            margin: 20,
+            marginTop: 50,
+          }}
+        >
+          <Text
             style={{
-              backgroundColor: "#33c37d",
-              width: width - 40,
-              alignItems: "center",
-              padding: 10,
-              borderRadius: 5,
-              margin: 20,
+              fontSize: 24,
+              fontWeight: "bold",
+              color: "white",
             }}
           >
-            <Text
-              style={{
-                fontSize: 24,
-                fontWeight: "bold",
-                color: "white",
-              }}
-            >
-              UPDATE
-            </Text>
-          </TouchableOpacity>
-        </View>
+            UPDATE
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
-  _updateInfo = () => {
-    fetch(
-      "http://9e603c3c61f4.ngrok.io/api/access/user:update/" +
-        this.state.userData._id,
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json, text/plain",
-          "Content-Type": "application/json;charset=UTF-8",
-        },
+  _updateInfo() {
+    this.setState({
+      errorName: "",
+      errorPhone: "",
+      errorAddress: "",
+    });
+    if (
+      this.state.name.trim().length < 6 ||
+      this.state.name.trim().length > 50
+    ) {
+      this.setState({ errorName: "*Tên phải từ 6 - 50 ký tự*" });
+    } else if (
+      this.state.phone.trim().length < 6 ||
+      this.state.phone.trim().length > 20
+    ) {
+      this.setState({ errorPhone: "*Số điện thoại phải từ 6 - 20 ký tự*" });
+    } else if (isNaN(this.state.phone)) {
+      this.setState({ errorPhone: "*Số điện thoại không hợp lệ*" });
+    } else if (
+      this.state.address.trim().length < 6 ||
+      this.state.address.trim().length > 50
+    ) {
+      this.setState({ errorAddress: "*địa chỉ phải từ 6 - 50 ký tự*" });
+    } else {
+      fetch(
+        "http://dae38e3f286c.ngrok.io/api/access/user:update/" +
+          this.state.user._id,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json, text/plain",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
 
-        body: JSON.stringify({
-          name: this.state.name,
-          phone: this.state.phone,
-          address: this.state.address,
-        }),
-      }
-    )
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      })
-      .done();
-  };
+          body: JSON.stringify({
+            name: this.state.name,
+            phone: this.state.phone,
+            address: this.state.address,
+          }),
+        }
+      )
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        })
+        .done();
+    }
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 20,
+    width: width,
     flex: 1,
-    backgroundColor: "#F2F2F2",
-    alignItems: "center",
+    alignItems: "stretch",
+    backgroundColor: "#b3ffb3",
+  },
+  inputcomponent: {
+    // flexDirection: "row",
+    // justifyContent: "center",
+  },
+  label: {
+    marginLeft: 10,
+    // flex: 3,
+    fontSize: 16,
     justifyContent: "center",
   },
-  banner: {
-    width: width,
-    alignItems: "center",
-  },
-  image: {
-    height: 100,
-    width: width,
-    margin: 5,
-  },
-  imageBanner: {
-    height: width / 2,
-    width: width - 40,
-    borderRadius: 10,
-    marginHorizontal: 20,
-  },
-  titleCategory: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 2,
-    marginBottom: 5,
-  },
-  divCategory: {
-    backgroundColor: "red",
-    margin: 5,
-    alignItems: "center",
-    borderRadius: 10,
-    padding: 10,
-  },
-  imageFood: {
-    width: width / 2 - 20 - 10,
-    height: width / 2 - 20 - 30,
-    backgroundColor: "transparent",
-  },
-  divFood: {
-    width: width / 2 - 20,
-    // height:(width/2),
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-    marginBottom: 0,
-    marginLeft: 12,
-    alignItems: "center",
-    elevation: 8,
-    shadowOpacity: 0.3,
-    shadowRadius: 50,
-    backgroundColor: "white",
-  },
-
   input: {
-    width: 280,
+    marginLeft: 10,
+    marginRight: 10,
+    padding: 10,
+    // flex: 9,
     height: 45,
     backgroundColor: "#fff",
-    marginBottom: 10,
     borderRadius: 5,
+    marginBottom: 10,
+  },
+  textError: {
+    marginLeft: 10,
+    color: "red",
+    fontStyle: "italic",
   },
 });
