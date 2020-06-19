@@ -95,7 +95,7 @@ export default class Register extends Component {
     } else if (this.state.password != this.state.confirm) {
       this.setState({ errorConfirm: "*Mật khẩu không khớp*" });
     } else {
-      fetch("https://b5f0433e28a1.ngrok.io/api/auth/register", {
+      fetch("https://b5f0433e28a1.ngrok.io/api/auth/register-mobile", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",

@@ -152,10 +152,29 @@ export default class Profile extends Component {
           >
             UPDATE
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity><TouchableOpacity
+              onPress={() => this.props.navigation.goBack()}
+              style={{
+                backgroundColor: "#000",
+                width: width - 40,
+                marginLeft: 20,
+                justifyContent: "center",
+                textAlign: "center",
+                alignItems: "center",
+                borderRadius: 5,
+                padding: 5,
+              }}
+            >
+              <Text style={{ marginLeft: 10, fontSize: 30, color: "#fff" }}>
+                ĐẶT HÀNG
+              </Text>
+            </TouchableOpacity>
       </View>
     );
   }
+  // _thanhtoan(){
+
+  // }
   _updateInfo() {
     this.setState({
       errorName: "",
