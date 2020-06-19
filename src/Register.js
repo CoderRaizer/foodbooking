@@ -20,6 +20,7 @@ export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      url_API: "https://ba55efc41e16.ngrok.io",
       secureTextEntry: true,
       nameIcon: "md-eye",
       name: "",
@@ -37,15 +38,7 @@ export default class Register extends Component {
     };
   }
   _register() {
-    // this.validate({
-    //   name: { minlength: 5, maxlength: 20, required: true },
-    //   email: { email: true },
-    //   password: { minlength: 5, maxlength: 20, required: true },
-    //   confirm: { minlength: 5, maxlength: 20, required: true },
-    //   phone: { minlength: 5, maxlength: 12, required: true },
-    //   address: { minlength: 5, maxlength: 50, required: true },
-    // });
-    // alert('mat khau sai');
+
     this.setState({
       errorName: "",
       errorEmail: "",
@@ -55,6 +48,7 @@ export default class Register extends Component {
       errorConfirm: "",
     });
 
+    // TODO : Validation Zone
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (
       this.state.name.trim().length < 6 ||
@@ -95,7 +89,7 @@ export default class Register extends Component {
     } else if (this.state.password != this.state.confirm) {
       this.setState({ errorConfirm: "*Mật khẩu không khớp*" });
     } else {
-      fetch("https://b5f0433e28a1.ngrok.io/api/auth/register-mobile", {
+      fetch(this.state.url_API + "/api/auth/register-mobile", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",
@@ -111,12 +105,11 @@ export default class Register extends Component {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert("dang ky thanh cong");
+          alert("Đăng Ký Thành Công");
           // this.props.navigation.navigate("login");
         })
         .catch((error) => {
-          alert('Lỗi server:' + error);
-          // console.error("Error:", error);
+          alert('Error server:' + error);
         })
         .done();
     }
@@ -125,7 +118,7 @@ export default class Register extends Component {
     if (this.state.username == "a" && this.state.password == "a") {
       this.props.navigation.navigate("home");
     } else {
-      alert("tk-mk sai");
+      alert("Tài Khoản Hoặc Mật Khẩu Sai");
     }
   };
   _hidePass() {
@@ -140,9 +133,7 @@ export default class Register extends Component {
       nameIcon: name,
     });
   }
-  // _register() {
-  //   this.props.navigation.navigate();
-  // }
+
   render() {
     const Divider = (props) => {
       return (
@@ -153,9 +144,6 @@ export default class Register extends Component {
         </View>
       );
     };
-    // const rules = {any: /^(.*)$/};
-
-    // <FormTest rules={rules} />
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -164,12 +152,12 @@ export default class Register extends Component {
             <Text
               style={{
                 fontSize: 25,
-                color: "red",
+                color: "#333",
                 fontWeight: "bold",
                 textAlign: "center",
               }}
             >
-              Please enter information
+              Registration
             </Text>
           </View>
           <View style={styles.down}>
@@ -280,7 +268,7 @@ export default class Register extends Component {
             <TouchableOpacity
               style={{
                 ...styles.btnLogin,
-                backgroundColor: "#661a00",
+                backgroundColor: "#0450c2",
               }}
               onPress={() => this._register()}
             >
@@ -290,7 +278,7 @@ export default class Register extends Component {
               style={{ ...styles.btnLogin, marginTop: 10 }}
               onPress={() => this.props.navigation.goBack()}
             >
-              <Text style={styles.login}>Login</Text>
+              <Text style={styles.login}>Back to Login</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -300,10 +288,10 @@ export default class Register extends Component {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 5,
     justifyContent: "center",
     alignItems: "stretch",
-    backgroundColor: "#ccccff",
+    backgroundColor: "white",
   },
   banner: {
     width: width,
@@ -315,16 +303,15 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   up: {
-    paddingTop: 20,
+    paddingTop: 50,
     flex: 1,
   },
   down: {
-    flex: 10,
+    flex: 15,
     justifyContent: "flex-start",
     alignItems: "center",
   },
   label: {
-    // marginLeft: 10,
     fontSize: 16,
     justifyContent: "center",
   },
@@ -332,9 +319,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     width: width - 40,
     height: 40,
-    backgroundColor: "#fff",
+    backgroundColor: "#ededeb",
     marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 2,
   },
   titleLogin: {
     fontSize: 20,
@@ -351,8 +338,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     width: 280,
     height: 45,
-    backgroundColor: "red",
-    borderRadius: 10,
+    backgroundColor: "#1094b5",
+    borderRadius: 3,
     alignItems: "center",
     justifyContent: "center",
   },

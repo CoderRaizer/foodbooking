@@ -20,6 +20,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      url_API: "https://ba55efc41e16.ngrok.io",
       idUser: "",
       don: [],
       chitiets: [],
@@ -27,19 +28,12 @@ export default class App extends Component {
     };
   }
   componentDidMount() {
-    // const url = "https://tutofox.com/foodapp/api.json";
     AsyncStorage.getItem("User")
       .then((user) => {
         if (user !== null) {
           const userdata = JSON.parse(user);
-          // this.setState({
-          //   idUser: userdata._id,
-          // });
-          // console.log("daslfknal" + this.state.idUser);
-          const url =
-            "https://2ade04a20fa7.ngrok.io/api/access/order:fetchByUserId/" +
-            userdata._id;
-          return fetch(url)
+
+          return fetch(this.state.url_API + "/api/access/order:fetchByUserId/" +userdata._id)
             .then((response) => response.json())
             .then((responseJson) => {
               this.setState({
@@ -48,9 +42,7 @@ export default class App extends Component {
               });
               console.log(responseJson.data);
             })
-            .catch((error) => {
-              // console.log(error);
-            });
+            .catch((error) => {console.log(error);});
         }
       })
       .catch((err) => {
@@ -58,9 +50,7 @@ export default class App extends Component {
       });
   }
   _datafood(item) {
-    const url =
-      "https://2ade04a20fa7.ngrok.io/api/access/order:fetchDetail/" + item._id;
-    return fetch(url)
+    return fetch(this.state.url_API + "/api/access/order:fetchDetail/" + item._id)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -76,10 +66,9 @@ export default class App extends Component {
         console.log(error);
       });
   }
-  _renderItemFoods(item) {
+  _renderSingleItem(item) {
     return (
       <TouchableOpacity
-        // onPress={() => this._detail(item)}
         style={styles.divFood}
       >
         <Image
@@ -90,22 +79,24 @@ export default class App extends Component {
         <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
           {item.name}
         </Text>
-        <Text>{item.description}</Text>
-        <Text>Quantity: {item.quantity}</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
+          {item.description}
+          </Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
+          Quantity: {item.quantity}
+          </Text>
         {/* <Text>{item.description}</Text> */}
-        <Text style={{ fontSize: 18, color: "green" }}>Price: ${item.food.price}</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>Price: ${item.food.price}</Text>
 
         
       </TouchableOpacity>
     );
   }
-  // abc() {}
   _renderItem(item) {
     return (
       <TouchableOpacity
         onPress={() => this._datafood(item)}
-        // onPress={() => console.log(this.state.chitiets)}
-        style={styles.divFood}
+        style={styles.divBill}
       >
         <View
           style={{
@@ -114,7 +105,9 @@ export default class App extends Component {
             width: width - 20,
           }}
         />
+        <Icon name="md-clipboard" size={30} color={"#2843bd"} />
         <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
+        
           ID: {item._id}
         </Text>
         <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
@@ -130,7 +123,7 @@ export default class App extends Component {
         {this.state.lastList == 1 ? (
           <View style={styles.container}>
             <View style={{ height: 20 }} />
-            <Text style={styles.titleCategory}>Lịch sử mua hàng</Text>
+            <Text style={styles.titleOrderHistory}>Order History</Text>
             <FlatList
               data={this.state.don}
               numColumns={1}
@@ -138,11 +131,15 @@ export default class App extends Component {
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
-        ) : (
+        )
+        
+        : // Separated
+        
+        (
           <View style={styles.container}>
             <View style={{ height: 20 }} />
             <TouchableOpacity
-              style={styles.cart}
+              style={styles.itemSingle}
               onPress={() =>
                 this.setState({
                   lastList: 1,
@@ -159,18 +156,18 @@ export default class App extends Component {
                 marginTop: 20,
               }}
             >
-              <Icon name="md-arrow-back" size={20} color={"#fff"} />
+              <Icon name="md-arrow-back" size={20} color={"white"} />
               <Text
-                style={{ fontSize: 18, color: "#ffff66", fontWeight: "bold" }}
+                style={{ fontSize: 18, color: "white", fontWeight: "bold" }}
               >
                 Back
               </Text>
             </TouchableOpacity>
-            <Text style={styles.titleCategory}>Mặt hàng đã mua</Text>
+            <Text style={styles.titleOrderHistory}>Mặt hàng đã mua</Text>
             <FlatList
               data={this.state.chitiets}
               numColumns={1}
-              renderItem={({ item }) => this._renderItemFoods(item)}
+              renderItem={({ item }) => this._renderSingleItem(item)}
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
@@ -184,7 +181,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -203,11 +200,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 20,
   },
-  titleCategory: {
+  titleOrderHistory: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 2,
+    marginTop: 10,
     marginBottom: 5,
   },
   divCategory: {
@@ -222,23 +219,46 @@ const styles = StyleSheet.create({
     height: 100,
     backgroundColor: "transparent",
   },
-  divFood: {
-    // backgroundColor: "red",
+  divBill: {
     justifyContent: "flex-start",
     width: width - 20,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 1,
     marginTop: 20,
     marginBottom: 0,
     alignItems: "center",
     elevation: 8,
     shadowOpacity: 0.3,
     shadowRadius: 50,
-    backgroundColor: "white",
+    backgroundColor: "#f0faf3",
   },
+  divFood : {
+    justifyContent: "flex-start",
+    width: width - 20,
+    padding: 5,
+    borderRadius: 20,
+    marginTop: 5,
+    marginBottom: 0,
+    alignItems: "center",
+    elevation: 8,
+    shadowOpacity: 0.3,
+    shadowRadius: 100,
+    backgroundColor: "#e3faeb",
+  },
+
   imageDetail: {
     height: width - 40,
     width: width,
+  },
+
+  itemSingle : {
+    justifyContent: "center",
+    flexDirection: "row",
+    marginLeft: 10,
+    width: 100,
+    backgroundColor: "#d5eddd",
+    padding: 5,
+    borderRadius: 2,
   },
   cart: {
     justifyContent: "center",

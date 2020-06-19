@@ -10,12 +10,11 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 
 // TODO : Import Component
-import Address from "./Address";
+import Order from "./Order";
 import Cart from "./Cart";
 import Food from "./Food";
 import Profile from "./Profile";
 
-import { AsyncStorage } from "react-native";
 var { width } = Dimensions.get("window");
 console.disableYellowBox = true;
 
@@ -37,7 +36,7 @@ export default class Home extends Component {
         ) : this.state.module == 2 ? (
           <Cart />
         ) : this.state.module == 3 ? (
-          <Address />
+          <Order />
         ) : (
           <Profile />
         )}
@@ -69,11 +68,11 @@ export default class Home extends Component {
             onPress={() => this.setState({ module: 3 })}
           >
             <Icon
-              name="md-locate"
+              name="md-clipboard"
               size={20}
               color={this.state.module == 3 ? "#1654b8" : "gray"}
             />
-            <Text>Address</Text>
+            <Text>Order History</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.itemTab}

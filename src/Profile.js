@@ -14,6 +14,7 @@ export default class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      url_API: "https://ba55efc41e16.ngrok.io",
       _idUser: "",
       user: {},
       name: "",
@@ -33,7 +34,7 @@ export default class Profile extends Component {
           // We have data!!
           const userdata = JSON.parse(user);
           // TODO : Danger zone
-          fetch("https://b5f0433e28a1.ngrok.io/api/access/user/" + userdata._id)
+          fetch(this.state.url_API + "/api/access/user/" + userdata._id)
             .then((response) => response.json())
             .then((responseJson) => {
               this.setState({
@@ -63,13 +64,13 @@ export default class Profile extends Component {
         <Text
           style={{
             fontSize: 25,
-            color: "red",
+            color: "#283747 ",
             textAlign: "center",
             fontWeight: "bold",
             margin: 10,
           }}
         >
-          Personal information
+          Profile Customer
         </Text>
         <View style={styles.inputcomponent}>
           <Text style={styles.label}>Email: </Text>
@@ -130,13 +131,17 @@ export default class Profile extends Component {
             }}
           ></TextInput>
         </View>
+
+
         <TouchableOpacity
           onPress={() => this._updateInfo()}
           style={{
-            backgroundColor: "#990099",
+            backgroundColor: "#27AE60",
             width: width - 60,
             alignItems: "center",
+            justifyContent: "center",
             padding: 10,
+            margin:20,
             height: 50,
             borderRadius: 25,
             margin: 20,
@@ -150,11 +155,14 @@ export default class Profile extends Component {
               color: "white",
             }}
           >
-            UPDATE
+            Update
           </Text>
-        </TouchableOpacity><TouchableOpacity
+        </TouchableOpacity>
+        
+        <TouchableOpacity
               onPress={() => this.props.navigation.goBack()}
               style={{
+                alignItems:'center',
                 backgroundColor: "#000",
                 width: width - 40,
                 marginLeft: 20,
@@ -166,7 +174,7 @@ export default class Profile extends Component {
               }}
             >
               <Text style={{ marginLeft: 10, fontSize: 30, color: "#fff" }}>
-                ĐẶT HÀNG
+                Logout
               </Text>
             </TouchableOpacity>
       </View>
@@ -199,8 +207,7 @@ export default class Profile extends Component {
     ) {
       this.setState({ errorAddress: "*địa chỉ phải từ 6 - 50 ký tự*" });
     } else {
-      fetch(
-        "http://dae38e3f286c.ngrok.io/api/access/user:update/" +
+      fetch(this.state.url_API + "/api/access/user:update/" +
           this.state.user._id,
         {
           method: "PUT",
@@ -233,11 +240,7 @@ const styles = StyleSheet.create({
     width: width,
     flex: 1,
     alignItems: "stretch",
-    backgroundColor: "#b3ffb3",
-  },
-  inputcomponent: {
-    // flexDirection: "row",
-    // justifyContent: "center",
+    backgroundColor: "#fff",
   },
   label: {
     marginLeft: 10,
@@ -251,7 +254,7 @@ const styles = StyleSheet.create({
     padding: 10,
     // flex: 9,
     height: 45,
-    backgroundColor: "#fff",
+    backgroundColor: "#F2F3F4",
     borderRadius: 5,
     marginBottom: 10,
   },

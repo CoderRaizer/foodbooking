@@ -26,6 +26,7 @@ export default class login extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
+      url_API: "https://ba55efc41e16.ngrok.io",
       email: "",
       password: "",
       error: "",
@@ -42,53 +43,41 @@ export default class login extends ValidationComponent {
         duration: 500,
       }),
     ]).start(() => {
-      // this.props.navigation.navigate('login');
     });
   }
-  // 'Content-Type': 'text/plain;charset=UTF-8',
   login() {
     AsyncStorage.clear();
     this.setState({
       errorEmail: "",
       errorPassword: "",
-      // backgroundColorError: "",
     });
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (this.state.email.trim().length < 10) {
       this.setState({
-        error: "Email phải lớn hơn 10 ký tự",
-        backgroundColorError: "black",
+        error: "*Email phải lớn hơn 10 ký tự*",
       });
     } else if (reg.test(this.state.email) !== true) {
       this.setState({
         error: "*Định dạng email không hợp lệ*",
-        backgroundColorError: "black",
       });
     } else if (
       this.state.password.trim().length < 6 ||
       this.state.password.trim().length > 20
     ) {
       this.setState({
-        error: "Mật khẩu từ 6 - 20 ký tự",
-        backgroundColorError: "black",
+        error: "*Mật khẩu từ 6 - 20 ký tự*",
       });
     } else {
-      fetch("https://2ade04a20fa7.ngrok.io/api/auth/login-mobile", {
+      fetch(this.state.url_API + "/api/auth/login-mobile", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",
           "Content-Type": "application/json;charset=UTF-8",
         },
-        // header: {
-        //   'Accept': 'application/json',
-        //   'Content-Type': 'application/json',
-        // },
+
         body: JSON.stringify({
           username: this.state.email,
           password: this.state.password,
-          // email: "vonhuphu@gmail.com",
-          // username: "vonhuphu@gmail.com",
-          // password: "123456",
         }),
       })
         .then((response) => response.json())
@@ -105,9 +94,8 @@ export default class login extends ValidationComponent {
         .catch((error) => {
           this.setState({
             error: "Tài khoản hoặc mật khẩu không đúng",
-            // backgroundColorError: "black",
           });
-          alert("sáa");
+          alert("Sai Thông Tin Đăng Nhập");
         })
         .done();
     }
@@ -160,19 +148,19 @@ export default class login extends ValidationComponent {
                 source={require("./image/grab.png")}
               />
               <Animated.Text
-                style={{ ...styles.title, marginLeft: this.state.foodbooking }}
+                style={{ ...styles.title, marginCenter: this.state.foodbooking }}
               >
-                Welcome to Foodbooking
+                Sign in
               </Animated.Text>
             </View>
             <View style={styles.down}>
               <View>
                 <Text
                   style={{
-                    color: "red",
+                    
+                    color: "#9e0e39",
                     fontStyle: "italic",
-                    fontSize: 18,
-                    // backgroundColor: this.state.backgroundColorError,
+                    fontSize: 12,
                     marginBottom: 10,
                     padding: 5,
                     paddingLeft: 15,
@@ -184,7 +172,6 @@ export default class login extends ValidationComponent {
                 </Text>
               </View>
               <View style={styles.inputcomponent}>
-                {/* <Text style={styles.label}>Email: </Text> */}
                 <TextInput
                   style={styles.input}
                   TextContentType="emaiAddress"
@@ -194,7 +181,6 @@ export default class login extends ValidationComponent {
                 ></TextInput>
               </View>
               <View style={styles.inputcomponent}>
-                {/* <Text style={styles.label}>Password: </Text> */}
                 <View
                   style={{
                     ...styles.input,
@@ -225,14 +211,14 @@ export default class login extends ValidationComponent {
               >
                 <Text style={styles.login}>Login</Text>
               </TouchableOpacity>
-              {/* <Divider style={styles.devider}></Divider>
+              <Divider style={styles.devider}></Divider>
             <FontAwesome.Button
               name="facebook"
               backgroundColor="#3b5998"
               style={styles.facebook}
             >
               <Text style={styles.btnFB}>Login with Facebook</Text>
-            </FontAwesome.Button> */}
+            </FontAwesome.Button>
               <TouchableOpacity
                 style={{
                   ...styles.btnLogin,
@@ -261,7 +247,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-
     backgroundColor: "#fff",
     marginTop: 100,
     height: 100,
@@ -273,9 +258,8 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center",
   },
-
   title: {
-    color: "#333333",
+    color: "#333",
     marginTop: 10,
     fontSize: 25,
   },
@@ -304,26 +288,26 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: "#fff",
     marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 3,
     marginRight: 15,
   },
   titleLogin: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 2,
-    marginBottom: 5,
+    marginTop: 1,
+    marginBottom: 2,
   },
   login: {
     fontSize: 18,
     color: "#fff",
   },
   btnLogin: {
-    marginTop: 20,
+    marginTop: 15,
     width: 280,
     height: 45,
-    backgroundColor: "#0450c2",
-    borderRadius: 10,
+    backgroundColor: "#27AE60",
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -331,7 +315,7 @@ const styles = StyleSheet.create({
     width: 280,
     height: 45,
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 5,
   },
   btnFB: {
     color: "#fff",

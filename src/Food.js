@@ -20,6 +20,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      url_API: "https://ba55efc41e16.ngrok.io",
       dataBanner: [],
       categories: [],
       foods: [],
@@ -32,48 +33,52 @@ export default class App extends Component {
       itemFood: {},
     };
   }
-  componentDidMount() {
 
-    const url = "https://2ade04a20fa7.ngrok.io/api/access/foods";
+
+  _fetchBannerPromotion() {
+    const urlExternal = "https://tutofox.com/foodapp/api.json";
+    return fetch(urlExternal)
+      .then((responseExternal) => responseExternal.json())
+      .then((responseExternalJson) => {
+        this.setState({
+          dataBanner: responseExternalJson.banner
+        });
+      })
+      .catch((error) => {console.log(error);});
+  }
+
+  fetchCategogyData() {
+    const urlCategorys = this.state.url_API + "/api/access/categorys";
+    return fetch(urlCategorys)
+      .then((responseCategorys) => responseCategorys.json())
+      .then((responseCategorysJson) => {
+        this.setState({
+          categories: responseCategorysJson.data
+        });
+        console.log(responseCategorysJson.data);
+      })
+      .catch((error) => {console.log(error);});
+  }
+
+  fetchFoodData() {
+    const url = this.state.url_API + "/api/access/foods";
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
           isLoading: false,
-          // categories : responseJson.categories,
           foods: responseJson.data,
         });
-
-        const urlExternal = "https://tutofox.com/foodapp/api.json";
-        return fetch(urlExternal)
-        .then((responseExternal) => responseExternal.json())
-        .then((responseExternalJson) => {
-          this.setState({
-            dataBanner: responseExternalJson.banner
-          });
-
-          const urlCategorys = "https://2ade04a20fa7.ngrok.io/api/access/categorys";
-          return fetch(urlCategorys)
-          .then((responseCategorys) => responseCategorys.json())
-          .then((responseCategorysJson) => {
-            this.setState({
-              categories: responseCategorysJson.data
-            });
-
-            console.log( responseCategorysJson.data);
-            
-          })
-
-
-        })
-        .catch((error) => {
-          console.log(error);
-          
-        });
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {console.log(error);});
+  }
+
+
+  componentDidMount() {
+    this._fetchBannerPromotion();
+    this.fetchCategogyData();
+    this.fetchFoodData();
+
   }
 
   // TODO : Render Display
@@ -90,16 +95,16 @@ export default class App extends Component {
                   source={require("../image/grab.png")}
                 />
                 <View style={{ flex: 1 }}>
-          <Swiper style={{height:width/2}}  showsButtons={false} autoplay={true} autoplayTimeout={1}>
-            {
-              this.state.dataBanner.map((itembann)=>{
-                return(
-                  <Image style={styles.imageBanner} resizeMode="contain" source={{uri:itembann}}/>
-                )
-              })
-            }
-          </Swiper>
-          </View>
+                  <Swiper style={{ height: width / 2 }} showsButtons={false} autoplay={true} autoplayTimeout={1}>
+                    {
+                      this.state.dataBanner.map((itembann) => {
+                        return (
+                          <Image style={styles.imageBanner} resizeMode="contain" source={{ uri: itembann }} />
+                        )
+                      })
+                    }
+                  </Swiper>
+                </View>
                 <View style={{ height: 20 }} />
               </View>
 
@@ -131,68 +136,68 @@ export default class App extends Component {
             </View>
           </ScrollView>
         ) : (
-          <View>
-            <TouchableOpacity
-              onPress={() => this._back()}
-              style={{
-                width: width / 4 - 10,
-                backgroundColor: "black",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                borderRadius: 5,
-                padding: 4,
-                marginTop: 20,
-              }}
-            >
-              <Icon name="md-arrow-back" size={20} color={"#fff"} />
-              <Text
-                style={{ fontSize: 18, color: "#ffff66", fontWeight: "bold" }}
-              >
-                Back
-              </Text>
-            </TouchableOpacity>
-            <Image
-              style={styles.imageDetail}
-              resizeMode="contain"
-              source={{ uri: this.state.pathImage }}
-            />
-            <View style={{ alignItems: "center" }}>
-              <Text style={{ fontSize: 30, marginTop: 20 }}>
-                {this.state.name}
-              </Text>
-              <Text style={{ fontSize: 30, marginTop: 20 }}>
-                Price: {this.state.price}
-              </Text>
-
-              <Text>{this.state.description}</Text>
-              {/* <Text style={{ fontSize: 30, marginTop: 20 }}>
-                Price: {this.state.price}
-              </Text> */}
+            <View>
               <TouchableOpacity
-                onPress={() => this.onClickAddCart(this.state.itemFood)}
+                onPress={() => this._back()}
                 style={{
-                  width: width - 40,
-                  backgroundColor: "#c2c2a3",
+                  width: width / 4 - 10,
+                  backgroundColor: "#333",
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 5,
+                  justifyContent: "space-between",
+                  borderRadius: 3,
                   padding: 4,
-                  marginTop: 20,
+                  marginTop: 45,
                 }}
               >
+                <Icon name="md-arrow-back" size={20} color={"#fff"} />
                 <Text
-                  style={{ fontSize: 25, color: "white", fontWeight: "bold" }}
+                  style={{ fontSize: 18, color: "#ffff66", fontWeight: "bold" }}
                 >
-                  Add Cart
-                </Text>
-                <View style={{ width: 10 }} />
-                <Icon name="md-add-circle" size={40} color={"green"} />
+                  Back
+              </Text>
               </TouchableOpacity>
+              <Image
+                style={styles.imageDetail}
+                resizeMode="contain"
+                source={{ uri: this.state.pathImage }}
+              />
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ fontSize: 30, marginTop: 20 }}>
+                  {this.state.name}
+                </Text>
+                <Text style={{ fontSize: 30, marginTop: 20 }}>
+                  $ {this.state.price}
+                </Text>
+
+                <Text>{this.state.description}</Text>
+                {/* <Text style={{ fontSize: 30, marginTop: 20 }}>
+                Price: {this.state.price}
+              </Text> */}
+                <TouchableOpacity
+                  onPress={() => this.onClickAddCart(this.state.itemFood)}
+                  style={{
+                    width: width - 40,
+                    backgroundColor: "#2ed17c",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 5,
+                    padding: 4,
+                    marginTop: 20,
+                  }}
+                >
+                  <Text
+                    style={{ fontSize: 25, color: "white", fontWeight: "bold" }}
+                  >
+                    Add Cart
+                </Text>
+                  <View style={{ width: 10 }} />
+                  <Icon name="md-add-circle" size={40} color={"#191c1a"} />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
+          )}
       </View>
     );
   }
@@ -220,54 +225,54 @@ export default class App extends Component {
   _renderItemFoods(item) {
     let cate = this.state.selectedCategory;
     if (cate == 0 || cate == item.categorie) {
-    return (
-      <TouchableOpacity
-        onPress={() => this._detail(item)}
-        style={styles.divFood}
-      >
-        <Image
-          style={styles.imageFood}
-          resizeMode="contain"
-          source={{ uri: item.pathImage }}
-        />
-        <View
-          style={{
-            height: width / 2 - 20 - 200,
-            backgroundColor: "transparent",
-            width: width / 2 - 20 - 10,
-          }}
-        />
-        <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
-          {item.name}
-        </Text>
-        <Text>{item.description}</Text>
-        <Text style={{ fontSize: 18, color: "green" }}>${item.price}</Text>
-
+      return (
         <TouchableOpacity
-          onPress={() => this.onClickAddCart(item)}
-          style={{
-            width: width / 2 - 40,
-            backgroundColor: "#33c37d",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 5,
-            padding: 4,
-          }}
+          onPress={() => this._detail(item)}
+          style={styles.divFood}
         >
-          <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
-            Add Cart
+          <Image
+            style={styles.imageFood}
+            resizeMode="contain"
+            source={{ uri: item.pathImage }}
+          />
+          <View
+            style={{
+              height: width / 2 - 20 - 200,
+              backgroundColor: "transparent",
+              width: width / 2 - 20 - 10,
+            }}
+          />
+          <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
+            {item.name}
           </Text>
-          <View style={{ width: 10 }} />
-          <Icon name="ios-add-circle" size={30} color={"black"} />
+          <Text>{item.description}</Text>
+          <Text style={{ fontSize: 18, color: "green" }}>${item.price}</Text>
+
+          <TouchableOpacity
+            onPress={() => this.onClickAddCart(item)}
+            style={{
+              width: width / 2 - 40,
+              backgroundColor: "#33c37d",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 5,
+              padding: 4,
+            }}
+          >
+            <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
+              Add Cart
+          </Text>
+            <View style={{ width: 10 }} />
+            <Icon name="ios-add-circle" size={30} color={"black"} />
+          </TouchableOpacity>
         </TouchableOpacity>
-      </TouchableOpacity>
-    );
+      );
     }
   }
 
-  _renderFoodByCategory(idCategory){
-    const url = "https://2ade04a20fa7.ngrok.io/api/access/food:byCategory/" + idCategory;
+  _renderFoodByCategory(idCategory) {
+    const url = this.state.url_API + "/api/access/food:byCategory/" + idCategory;
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -284,8 +289,7 @@ export default class App extends Component {
   _renderItemCategories(item) {
     return (
       <TouchableOpacity
-        style={[styles.divCategory, { backgroundColor: item.color }]}
-        // onPress={() => this.setState({ selectedCategory: item.id })}
+        style={[styles.divCategory, { backgroundColor: "#e1faed" }]}
         onPress={() => this._renderFoodByCategory(item._id)}
       >
         <Image

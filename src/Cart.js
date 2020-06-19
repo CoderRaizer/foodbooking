@@ -19,6 +19,7 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      url_API: "https://ba55efc41e16.ngrok.io",
       // TODO : Display data cart
       dataCart: [],
       // TODO : list item in cart
@@ -44,35 +45,35 @@ export default class Cart extends Component {
 
     // TODO : ============================================================== <User Process>
     AsyncStorage.getItem("User")
-    .then((user) => {
-      if (user !== null) {
-        // We have data!!
-        const userdata = JSON.parse(user);
-        // TODO : Fetch Data User From DataBase
-        fetch("https://2ade04a20fa7.ngrok.io/api/access/user/" + userdata._id)
-          .then((response) => response.json())
-          .then((responseJson) => {
+      .then((user) => {
+        if (user !== null) {
+          // We have data!!
+          const userdata = JSON.parse(user);
+          // TODO : Fetch Data User From DataBase
+          fetch(this.state.url_API + "/api/access/user/" + userdata._id)
+            .then((response) => response.json())
+            .then((responseJson) => {
 
-            // TODO: State zone
-            this.setState({
-              _idUser:userdata._id,
-              user: responseJson.data,
-              // TODO : field display
-              name: responseJson.data.name,
-              phone: responseJson.data.phone,
-              address: responseJson.data.address,
+              // TODO: State zone
+              this.setState({
+                _idUser: userdata._id,
+                user: responseJson.data,
+                // TODO : field display
+                name: responseJson.data.name,
+                phone: responseJson.data.phone,
+                address: responseJson.data.address,
 
-              isLoading: false,
-            });
+                isLoading: false,
+              });
 
-          })
-          .catch((error) => {console.log(error);});
-        console.log(this.state.userData);
-      }
-    })
-    .catch((err) => {alert(err);});
+            })
+            .catch((error) => { console.log(error); });
+          console.log(this.state.userData);
+        }
+      })
+      .catch((err) => { alert(err); });
 
-  
+
 
     // TODO : ============================================================== <Cart Process>
     AsyncStorage.getItem("cart")
@@ -87,12 +88,12 @@ export default class Cart extends Component {
           console.log('=========================== CART ASYNC STORAGE =========================');
           console.log(cartfood);
           console.log('=========================== CART ASYNC STORAGE =========================');
-          
+
 
           cartfood.map(element => {
             var item = {
-              idFood:element.food._id,
-              quantity:element.quantity
+              idFood: element.food._id,
+              quantity: element.quantity
             }
             this.state.listItem.push(item);
           });
@@ -101,13 +102,13 @@ export default class Cart extends Component {
           console.log(this.state.listItem);
           console.log('=========================== CART PAYLOAD DATA ===========================');
 
-          
+
           this.state.isEmptyCart = false;
         } else {
           this.state.isEmptyCart = true;
         }
       })
-      .catch((err) => {alert(err);});
+      .catch((err) => { alert(err); });
 
 
   }
@@ -138,23 +139,28 @@ export default class Cart extends Component {
   }
 
   _checkOut() {
-    // alert('ok');
     var tong = 0;
     this.state.dataCart.forEach(function (i) {
       tong += i.price * i.quantity;
     });
 
-    this.setState({
-      screen: 0,
-      pay: tong,
-    });
+    if (tong > 0){
+      this.setState({
+        screen: 0,
+        pay: tong,
+      });
+    }
+    else {
+      alert('Cart is empty!');
+    }
+
   }
   _Cart() {
     this.setState({
       screen: 1,
     });
   }
-  _thanhtoan() {
+  _confirmPayment() {
     this.setState({
       errorName: "",
       errorPhone: "",
@@ -179,7 +185,7 @@ export default class Cart extends Component {
       this.setState({ errorAddress: "*địa chỉ phải từ 6 - 50 ký tự*" });
     } else {
 
-      fetch("https://2ade04a20fa7.ngrok.io/api/access/order:create", {
+      fetch(this.state.url_API + "/api/access/order:create", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",
@@ -206,15 +212,16 @@ export default class Cart extends Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+
         {this.state.screen == 1 ? (
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <View style={{ height: 20 }} />
             <Text
-              style={{ fontSize: 32, fontWeight: "bold", color: "#33c37d" }}
+              style={{ fontSize: 32, paddingTop: 25, fontWeight: "bold", color: "#333" }}
             >
-              Cart food
+              Cart
             </Text>
             <View style={{ height: 10 }} />
 
@@ -250,7 +257,7 @@ export default class Cart extends Component {
                           <Text style={{ fontWeight: "bold", fontSize: 20 }}>
                             {item.food.name}
                           </Text>
-                          <Text>Lorem Ipsum de food</Text>
+                          <Text>{item.food.description}</Text>
                         </View>
                         <View
                           style={{
@@ -261,7 +268,7 @@ export default class Cart extends Component {
                           <Text
                             style={{
                               fontWeight: "bold",
-                              color: "#33c37d",
+                              color: "#282f7d",
                               fontSize: 20,
                             }}
                           >
@@ -316,7 +323,7 @@ export default class Cart extends Component {
                     width: width - 40,
                     alignItems: "center",
                     padding: 10,
-                    borderRadius: 10,
+                    borderRadius: 2,
                     margin: 20,
                   }}
                 >
@@ -324,142 +331,140 @@ export default class Cart extends Component {
                     style={{
                       fontSize: 24,
                       fontWeight: "bold",
-                      color: "white",
+                      color: "#333",
                     }}
                   >
-                    CHECKOUT
+                    Check Out
                   </Text>
                 </TouchableOpacity>
                 <View style={{ height: 10 }} />
               </ScrollView>
             </View>
           </View>
-        ) : this.state.screen == 0 ? (
-          <View style={styles.container}>
-            <TouchableOpacity style={styles.cart} onPress={() => this._Cart()}>
-              <Icon name="md-cart" size={30} color={"red"} />
+        )
+
+          : this.state.screen == 0 ? (
+
+            <View style={styles.container}>
+
               <Text
                 style={{
-                  marginLeft: 10,
-                  fontSize: 20,
+                  paddingTop:20,
+                  textAlign:'center',
+                  alignItems:'center',
+                  fontSize: 25,
                   fontWeight: "bold",
-                  color: "green",
+                  color: "#333",
+                }}>
+                Comfirm Info Checkout
+              </Text>
+
+              <TouchableOpacity style={styles.buttonBack} onPress={() => this._Cart()}>
+                <Icon name="md-arrow-back" size={25} color={"#333"} />
+
+              </TouchableOpacity>
+
+              <View style={styles.inputcomponent}>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={styles.label}>Name: </Text>
+                  <Text style={styles.textError}>{this.state.errorName}</Text>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your name"
+                  onChangeText={(text) => this.setState({ name: text })}
+                  value={this.state.name}
+                  onSubmitEditing={() => {
+                    this.secondTextInput.focus();
+                  }}
+                // blurOnSubmit={false}
+                ></TextInput>
+              </View>
+              <View style={styles.inputcomponent}>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={styles.label}>Phone: </Text>
+                  <Text style={styles.textError}>{this.state.errorPhone}</Text>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your phone"
+                  onChangeText={(text) => this.setState({ phone: text })}
+                  value={this.state.phone}
+                  ref={(input) => {
+                    this.secondTextInput = input;
+                  }}
+                  onSubmitEditing={() => {
+                    this.thirdTextInput.focus();
+                  }}
+                // blurOnSubmit={false}
+                ></TextInput>
+              </View>
+              <View style={styles.inputcomponent}>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={styles.label}>Address: </Text>
+                  <Text style={styles.textError}>{this.state.errorAddress}</Text>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your address"
+                  onChangeText={(text) => this.setState({ address: text })}
+                  value={this.state.address}
+                  ref={(input) => {
+                    this.thirdTextInput = input;
+                  }}
+                ></TextInput>
+              </View>
+              <Text
+                style={{
+                  textAlign: 'left',
+                  fontSize: 30,
+                  textAlign: "center",
+                  color: "#1F618D",
                 }}
               >
-                Back
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.inputcomponent}>
-              <Text style={styles.label}>Email: </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                value={this.state.user.email}
-                editable={false}
-              ></TextInput>
-            </View>
-            <View style={styles.inputcomponent}>
-              <View style={{ flexDirection: "row" }}>
-                <Text style={styles.label}>Name: </Text>
-                <Text style={styles.textError}>{this.state.errorName}</Text>
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your name"
-                onChangeText={(text) => this.setState({ name: text })}
-                value={this.state.name}
-                onSubmitEditing={() => {
-                  this.secondTextInput.focus();
-                }}
-                // blurOnSubmit={false}
-              ></TextInput>
-            </View>
-            <View style={styles.inputcomponent}>
-              <View style={{ flexDirection: "row" }}>
-                <Text style={styles.label}>Phone: </Text>
-                <Text style={styles.textError}>{this.state.errorPhone}</Text>
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your phone"
-                onChangeText={(text) => this.setState({ phone: text })}
-                value={this.state.phone}
-                ref={(input) => {
-                  this.secondTextInput = input;
-                }}
-                onSubmitEditing={() => {
-                  this.thirdTextInput.focus();
-                }}
-                // blurOnSubmit={false}
-              ></TextInput>
-            </View>
-            <View style={styles.inputcomponent}>
-              <View style={{ flexDirection: "row" }}>
-                <Text style={styles.label}>Address: </Text>
-                <Text style={styles.textError}>{this.state.errorAddress}</Text>
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your address"
-                onChangeText={(text) => this.setState({ address: text })}
-                value={this.state.address}
-                ref={(input) => {
-                  this.thirdTextInput = input;
-                }}
-              ></TextInput>
-            </View>
-            <Text
-              style={{
-                marginLeft: 10,
-                fontSize: 30,
-                textAlign: "center",
-                color: "red",
-              }}
-            >
-              Tổng tiền: {this.state.pay} $
+                Total Payment: ${this.state.pay}
             </Text>
-            <TouchableOpacity
-              onPress={() => this._thanhtoan()}
-              style={{
-                backgroundColor: "#000",
-                width: width - 40,
-                marginLeft: 20,
-                justifyContent: "center",
-                textAlign: "center",
-                alignItems: "center",
-                borderRadius: 5,
-                padding: 5,
-              }}
-            >
-              <Text style={{ marginLeft: 10, fontSize: 30, color: "#fff" }}>
-                ĐẶT HÀNG
+              <TouchableOpacity
+                onPress={() => this._confirmPayment()}
+                style={{
+                  backgroundColor: "#1cbd9a",
+                  width: width - 40,
+                  marginLeft: 20,
+                  justifyContent: "center",
+                  textAlign: "center",
+                  alignItems: "center",
+                  borderRadius: 5,
+                  padding: 10,
+                }}
+              >
+                <Text style={{ marginLeft: 10, fontSize: 20, color: "#333"}}>
+                  Place Order
               </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={{ justifyContent: "center" }}>
-            <Text style={{ fontSize: 20 }}>
-              Đặt hàng thành công, vui lòng chờ...
+              </TouchableOpacity>
+            </View>
+          ) : (
+              <View style={{ justifyContent: "center" }}>
+                <Text style={{ fontSize: 20}}>
+                  Đặt hàng thành công, vui lòng chờ...
             </Text>
-            <TouchableOpacity
-              onPress={() => this.setState({ screen: 1 })}
-              style={{
-                backgroundColor: "#000",
-                width: width - 40,
-                marginLeft: 20,
-                justifyContent: "center",
-                textAlign: "center",
-                alignItems: "center",
-                borderRadius: 5,
-                padding: 5,
-              }}
-            >
-              <Text style={{ marginLeft: 10, fontSize: 30, color: "#fff" }}>
-                Xong
+                <TouchableOpacity
+                  onPress={() => this.setState({ screen: 1 })}
+                  style={{
+                    backgroundColor: "#c8fadb",
+                    width: width - 40,
+                    justifyContent: "center",
+                    textAlign: "center",
+                    alignItems: "center",
+                    borderRadius: 5,
+                    padding: 5,
+                  }}
+                >
+                  <Text style={{ marginLeft: 10, fontSize: 30, color: "#344038" }}>
+                    Order Food Successfully
               </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+                </TouchableOpacity>
+              </View>
+            )}
       </View>
     );
   }
@@ -470,10 +475,20 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     width: width,
     flex: 1,
-    // justifyContent: "center",
     alignItems: "stretch",
-    backgroundColor: "#00b3b3",
+    backgroundColor: "#D7DBDD",
   },
+
+  buttonBack: {
+    justifyContent: "center",
+    flexDirection: "row",
+    margin: 15,
+    width: 50,
+    backgroundColor: "#2471A3",
+    paddingTop: 10,
+    borderRadius: 2,
+  },
+
   cart: {
     justifyContent: "center",
     flexDirection: "row",
@@ -483,22 +498,15 @@ const styles = StyleSheet.create({
     padding: 7,
     borderRadius: 5,
   },
-  inputcomponent: {
-    // flexDirection: "row",
-    // justifyContent: "center",
-  },
   label: {
     marginLeft: 10,
-    // flex: 3,
     fontSize: 20,
-    // paddingTop: 10,
     justifyContent: "center",
   },
   input: {
     marginLeft: 10,
     marginRight: 10,
     padding: 10,
-    // flex: 9,
     height: 45,
     backgroundColor: "#fff",
     marginBottom: 10,

@@ -14,7 +14,7 @@ import Login from "./src/Login";
 import Home from "./src/Home";
 import Cart from "./src/Cart";
 import Food from "./src/Food";
-import Address from "./src/Address";
+import Order from "./src/Order";
 import Profile from "./src/Profile";
 import Register from "./src/Register";
 import Splash from "./src/Splash";
