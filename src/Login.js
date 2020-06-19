@@ -38,8 +38,8 @@ export default class login extends ValidationComponent {
   async componentDidMount() {
     Animated.sequence([
       Animated.timing(this.state.foodbooking, {
-        toValue: 30,
-        duration: 1000,
+        toValue: 15,
+        duration: 500,
       }),
     ]).start(() => {
       // this.props.navigation.navigate('login');
@@ -51,28 +51,28 @@ export default class login extends ValidationComponent {
     this.setState({
       errorEmail: "",
       errorPassword: "",
-      backgroundColorError: "",
+      // backgroundColorError: "",
     });
-    // const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    // if (this.state.email.trim().length < 10) {
-    //   this.setState({
-    //     error: "Email phải lớn hơn 10 ký tự",
-    //     backgroundColorError: "black",
-    //   });
-    // } else if (reg.test(this.state.email) !== true) {
-    //   this.setState({
-    //     error: "*Định dạng email không hợp lệ*",
-    //     backgroundColorError: "black",
-    //   });
-    // } else if (
-    //   this.state.password.trim().length < 6 ||
-    //   this.state.password.trim().length > 20
-    // ) {
-    //   this.setState({
-    //     error: "Mật khẩu từ 6 - 20 ký tự",
-    //     backgroundColorError: "black",
-    //   });
-    // } else {
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (this.state.email.trim().length < 10) {
+      this.setState({
+        error: "Email phải lớn hơn 10 ký tự",
+        backgroundColorError: "black",
+      });
+    } else if (reg.test(this.state.email) !== true) {
+      this.setState({
+        error: "*Định dạng email không hợp lệ*",
+        backgroundColorError: "black",
+      });
+    } else if (
+      this.state.password.trim().length < 6 ||
+      this.state.password.trim().length > 20
+    ) {
+      this.setState({
+        error: "Mật khẩu từ 6 - 20 ký tự",
+        backgroundColorError: "black",
+      });
+    } else {
       fetch("https://2ade04a20fa7.ngrok.io/api/auth/login-mobile", {
         method: "POST",
         headers: {
@@ -84,28 +84,33 @@ export default class login extends ValidationComponent {
         //   'Content-Type': 'application/json',
         // },
         body: JSON.stringify({
-          // username: this.state.username,
-          // password: this.state.password,
+          username: this.state.email,
+          password: this.state.password,
           // email: "vonhuphu@gmail.com",
-          username: "vonhuphu@gmail.com",
-          password: "123456",
+          // username: "vonhuphu@gmail.com",
+          // password: "123456",
         }),
       })
         .then((response) => response.json())
         .then((data) => {
           const user = data.data;
-          AsyncStorage.setItem("User", JSON.stringify(user));
-          this.props.navigation.navigate("home");
-          console.log(user);
+          if (data.data.name.trim().length != 0) {
+            AsyncStorage.setItem("User", JSON.stringify(user));
+            console.log(user);
+            this.props.navigation.navigate("home");
+          } else {
+            alert("sáa");
+          }
         })
         .catch((error) => {
           this.setState({
             error: "Tài khoản hoặc mật khẩu không đúng",
-            backgroundColorError: "black",
+            // backgroundColorError: "black",
           });
+          alert("sáa");
         })
         .done();
-    // }
+    }
   }
   _kiemtra = () => {
     if (this.state.email == "a" && this.state.password == "a") {
@@ -143,11 +148,11 @@ export default class login extends ValidationComponent {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <ImageBackground
+          {/* <ImageBackground
             // resizeMode="contain"
             source={require("./image/food2.png")}
             style={styles.imageNen}
-          >
+          > */}
             <View style={styles.up}>
               <Image
                 style={styles.image}
@@ -167,7 +172,7 @@ export default class login extends ValidationComponent {
                     color: "red",
                     fontStyle: "italic",
                     fontSize: 18,
-                    backgroundColor: this.state.backgroundColorError,
+                    // backgroundColor: this.state.backgroundColorError,
                     marginBottom: 10,
                     padding: 5,
                     paddingLeft: 15,
@@ -231,14 +236,14 @@ export default class login extends ValidationComponent {
               <TouchableOpacity
                 style={{
                   ...styles.btnLogin,
-                  backgroundColor: "#661a00",
+                  backgroundColor: "#333",
                 }}
                 onPress={() => this._register()}
               >
                 <Text style={styles.login}>Register</Text>
               </TouchableOpacity>
             </View>
-          </ImageBackground>
+          {/* </ImageBackground> */}
         </View>
       </TouchableWithoutFeedback>
     );
@@ -256,8 +261,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
+
     backgroundColor: "#fff",
-    marginTop: 30,
+    marginTop: 100,
     height: 100,
     width: 100,
     borderRadius: 50,
@@ -269,7 +275,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: "blue",
+    color: "#333333",
     marginTop: 10,
     fontSize: 25,
   },

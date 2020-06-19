@@ -49,7 +49,7 @@ export default class Cart extends Component {
         // We have data!!
         const userdata = JSON.parse(user);
         // TODO : Fetch Data User From DataBase
-        fetch("https://b5f0433e28a1.ngrok.io/api/access/user/" + userdata._id)
+        fetch("https://2ade04a20fa7.ngrok.io/api/access/user/" + userdata._id)
           .then((response) => response.json())
           .then((responseJson) => {
 
@@ -179,7 +179,7 @@ export default class Cart extends Component {
       this.setState({ errorAddress: "*địa chỉ phải từ 6 - 50 ký tự*" });
     } else {
 
-      fetch("https://b5f0433e28a1.ngrok.io/api/access/order:create", {
+      fetch("https://2ade04a20fa7.ngrok.io/api/access/order:create", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",
