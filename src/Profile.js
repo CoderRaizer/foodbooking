@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { AsyncStorage } from "react-native";
+import DropdownAlert from 'react-native-dropdownalert';
 
 var { width } = Dimensions.get("window");
 export default class Profile extends Component {
@@ -60,7 +61,10 @@ export default class Profile extends Component {
 
   render() {
     return (
+
+
       <View style={styles.container}>
+
         <Text
           style={{
             fontSize: 25,
@@ -94,7 +98,7 @@ export default class Profile extends Component {
             onSubmitEditing={() => {
               this.secondTextInput.focus();
             }}
-            // blurOnSubmit={false}
+          // blurOnSubmit={false}
           ></TextInput>
         </View>
         <View style={styles.inputcomponent}>
@@ -113,7 +117,7 @@ export default class Profile extends Component {
             onSubmitEditing={() => {
               this.thirdTextInput.focus();
             }}
-            // blurOnSubmit={false}
+          // blurOnSubmit={false}
           ></TextInput>
         </View>
         <View style={styles.inputcomponent}>
@@ -141,7 +145,7 @@ export default class Profile extends Component {
             alignItems: "center",
             justifyContent: "center",
             padding: 10,
-            margin:20,
+            margin: 20,
             height: 50,
             borderRadius: 25,
             margin: 20,
@@ -158,25 +162,29 @@ export default class Profile extends Component {
             Update
           </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
-              onPress={() => this.props.navigation.goBack()}
-              style={{
-                alignItems:'center',
-                backgroundColor: "#000",
-                width: width - 40,
-                marginLeft: 20,
-                justifyContent: "center",
-                textAlign: "center",
-                alignItems: "center",
-                borderRadius: 5,
-                padding: 5,
-              }}
-            >
-              <Text style={{ marginLeft: 10, fontSize: 30, color: "#fff" }}>
-                Logout
+          onPress={() => this.props.navigation.goBack()}
+          style={{
+            alignItems: 'center',
+            backgroundColor: "#000",
+            width: width - 40,
+            marginLeft: 20,
+            justifyContent: "center",
+            textAlign: "center",
+            alignItems: "center",
+            borderRadius: 5,
+            padding: 5,
+          }}
+        >
+          <Text style={{ marginLeft: 10, fontSize: 30, color: "#fff" }}>
+            Logout
               </Text>
-            </TouchableOpacity>
+        </TouchableOpacity>
+
+        <View>
+          <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
+        </View>
       </View>
     );
   }
@@ -208,7 +216,7 @@ export default class Profile extends Component {
       this.setState({ errorAddress: "*địa chỉ phải từ 6 - 50 ký tự*" });
     } else {
       fetch(this.state.url_API + "/api/access/user:update/" +
-          this.state.user._id,
+        this.state.user._id,
         {
           method: "PUT",
           headers: {
@@ -231,6 +239,7 @@ export default class Profile extends Component {
         })
         .done();
     }
+    this.dropDownAlertRef.alertWithType('success', 'Success', 'Update data success.');
   }
 }
 

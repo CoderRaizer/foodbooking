@@ -12,6 +12,7 @@ import {
 import { AsyncStorage } from "react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
+import DropdownAlert from 'react-native-dropdownalert';
 
 var { width } = Dimensions.get("window");
 
@@ -144,14 +145,14 @@ export default class Cart extends Component {
       tong += i.price * i.quantity;
     });
 
-    if (tong > 0){
+    if (tong > 0) {
       this.setState({
         screen: 0,
         pay: tong,
       });
     }
     else {
-      alert('Cart is empty!');
+      this.dropDownAlertRef.alertWithType('warnwarn', 'Checkout invalid', 'Cart is empty');
     }
 
   }
@@ -211,7 +212,13 @@ export default class Cart extends Component {
 
   render() {
     return (
+      <View style={styles.container}>
+        <View>
+        <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
+      </View>
+
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+
 
         {this.state.screen == 1 ? (
           <View
@@ -349,9 +356,9 @@ export default class Cart extends Component {
 
               <Text
                 style={{
-                  paddingTop:20,
-                  textAlign:'center',
-                  alignItems:'center',
+                  paddingTop: 20,
+                  textAlign: 'center',
+                  alignItems: 'center',
                   fontSize: 25,
                   fontWeight: "bold",
                   color: "#333",
@@ -423,7 +430,7 @@ export default class Cart extends Component {
                 }}
               >
                 Total Payment: ${this.state.pay}
-            </Text>
+              </Text>
               <TouchableOpacity
                 onPress={() => this._confirmPayment()}
                 style={{
@@ -437,14 +444,14 @@ export default class Cart extends Component {
                   padding: 10,
                 }}
               >
-                <Text style={{ marginLeft: 10, fontSize: 20, color: "#333"}}>
+                <Text style={{ marginLeft: 10, fontSize: 20, color: "#333" }}>
                   Place Order
               </Text>
               </TouchableOpacity>
             </View>
           ) : (
               <View style={{ justifyContent: "center" }}>
-                <Text style={{ fontSize: 20}}>
+                <Text style={{ fontSize: 20 }}>
                   Đặt hàng thành công, vui lòng chờ...
             </Text>
                 <TouchableOpacity
@@ -465,6 +472,9 @@ export default class Cart extends Component {
                 </TouchableOpacity>
               </View>
             )}
+      </View>
+
+      
       </View>
     );
   }

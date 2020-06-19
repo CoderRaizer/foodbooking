@@ -17,6 +17,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import ValidationComponent from "react-native-form-validator";
 import { AsyncStorage } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import DropdownAlert from 'react-native-dropdownalert';
 
 var { height, width } = Dimensions.get("window");
 export default class login extends ValidationComponent {
@@ -88,14 +89,16 @@ export default class login extends ValidationComponent {
             console.log(user);
             this.props.navigation.navigate("home");
           } else {
-            alert("sáa");
+            console.log('data is not exist');
+            // this.dropDownAlertRef.alertWithType('error', 'Authentication invalid ', 'Wrong username or password');
           }
         })
         .catch((error) => {
+          this.dropDownAlertRef.alertWithType('error', 'Authentication invalid ', 'Wrong username or password');
           this.setState({
             error: "Tài khoản hoặc mật khẩu không đúng",
           });
-          alert("Sai Thông Tin Đăng Nhập");
+
         })
         .done();
     }
@@ -141,77 +144,82 @@ export default class login extends ValidationComponent {
             source={require("./image/food2.png")}
             style={styles.imageNen}
           > */}
-            <View style={styles.up}>
-              <Image
-                style={styles.image}
-                // resizeMode="contain"
-                source={require("./image/grab.png")}
-              />
-              <Animated.Text
-                style={{ ...styles.title, marginCenter: this.state.foodbooking }}
+
+          <View>
+            <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
+          </View>
+
+          <View style={styles.up}>
+            <Image
+              style={styles.image}
+              // resizeMode="contain"
+              source={require("./image/grab.png")}
+            />
+            <Animated.Text
+              style={{ ...styles.title, marginCenter: this.state.foodbooking }}
+            >
+              Sign in
+            </Animated.Text>
+          </View>
+          <View style={styles.down}>
+            <View>
+              <Text
+                style={{
+
+                  color: "#9e0e39",
+                  fontStyle: "italic",
+                  fontSize: 12,
+                  marginBottom: 10,
+                  padding: 5,
+                  paddingLeft: 15,
+                  paddingRight: 15,
+                  borderRadius: 20,
+                }}
               >
-                Sign in
-              </Animated.Text>
+                {this.state.error}
+              </Text>
             </View>
-            <View style={styles.down}>
-              <View>
-                <Text
-                  style={{
-                    
-                    color: "#9e0e39",
-                    fontStyle: "italic",
-                    fontSize: 12,
-                    marginBottom: 10,
-                    padding: 5,
-                    paddingLeft: 15,
-                    paddingRight: 15,
-                    borderRadius: 20,
-                  }}
-                >
-                  {this.state.error}
-                </Text>
-              </View>
-              <View style={styles.inputcomponent}>
-                <TextInput
-                  style={styles.input}
-                  TextContentType="emaiAddress"
-                  keyboardType="email-address"
-                  placeholder="Nhập email"
-                  onChangeText={(text) => this.setState({ email: text })}
-                ></TextInput>
-              </View>
-              <View style={styles.inputcomponent}>
-                <View
-                  style={{
-                    ...styles.input,
-                    flexDirection: "row",
-                  }}
-                >
-                  <TextInput
-                    style={{ flex: 9 }}
-                    placeholder="Nhập mật khẩu"
-                    secureTextEntry={this.state.secureTextEntry}
-                    onChangeText={(text) => this.setState({ password: text })}
-                  ></TextInput>
-                  <TouchableOpacity
-                    onPress={() => this._hidePass()}
-                    style={{ flex: 1, top: 10 }}
-                  >
-                    <Icon
-                      name={this.state.nameIcon}
-                      size={20}
-                      color={"black"}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <TouchableOpacity
-                style={styles.btnLogin}
-                onPress={() => this.login()}
+            <View style={styles.inputcomponent}>
+              <TextInput
+                style={styles.input}
+                TextContentType="emaiAddress"
+                keyboardType="email-address"
+                placeholder="Nhập email"
+                onChangeText={(text) => this.setState({ email: text })}
+              ></TextInput>
+            </View>
+            <View style={styles.inputcomponent}>
+              <View
+                style={{
+                  ...styles.input,
+                  flexDirection: "row",
+                }}
               >
-                <Text style={styles.login}>Login</Text>
-              </TouchableOpacity>
-              <Divider style={styles.devider}></Divider>
+                <TextInput
+                  style={{ flex: 9 }}
+                  placeholder="Nhập mật khẩu"
+                  secureTextEntry={this.state.secureTextEntry}
+                  onChangeText={(text) => this.setState({ password: text })}
+                ></TextInput>
+                <TouchableOpacity
+                  onPress={() => this._hidePass()}
+                  style={{ flex: 1, top: 10 }}
+                >
+                  <Icon
+                    name={this.state.nameIcon}
+                    size={20}
+                    color={"black"}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.btnLogin}
+              onPress={() => this.login()}
+            >
+              <Text style={styles.login}>Login</Text>
+            </TouchableOpacity>
+            <Divider style={styles.devider}></Divider>
             <FontAwesome.Button
               name="facebook"
               backgroundColor="#3b5998"
@@ -219,17 +227,20 @@ export default class login extends ValidationComponent {
             >
               <Text style={styles.btnFB}>Login with Facebook</Text>
             </FontAwesome.Button>
-              <TouchableOpacity
-                style={{
-                  ...styles.btnLogin,
-                  backgroundColor: "#333",
-                }}
-                onPress={() => this._register()}
-              >
-                <Text style={styles.login}>Register</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={{
+                ...styles.btnLogin,
+                backgroundColor: "#333",
+              }}
+              onPress={() => this._register()}
+            >
+              <Text style={styles.login}>Register</Text>
+            </TouchableOpacity>
+          </View>
           {/* </ImageBackground> */}
+
+
+
         </View>
       </TouchableWithoutFeedback>
     );
