@@ -73,7 +73,7 @@ export default class login extends ValidationComponent {
     //     backgroundColorError: "black",
     //   });
     // } else {
-      fetch("https://b5f0433e28a1.ngrok.io/api/auth/login-mobile", {
+      fetch("https://2ade04a20fa7.ngrok.io/api/auth/login-mobile", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",

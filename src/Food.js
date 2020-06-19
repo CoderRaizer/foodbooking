@@ -33,18 +33,42 @@ export default class App extends Component {
     };
   }
   componentDidMount() {
-    // const url = "https://tutofox.com/foodapp/api.json";
 
-    const url = "https://b5f0433e28a1.ngrok.io/api/access/foods";
+    const url = "https://2ade04a20fa7.ngrok.io/api/access/foods";
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
           isLoading: false,
-          // dataBanner: responseJson.banner,
           // categories : responseJson.categories,
           foods: responseJson.data,
-          // foods: responseJson.food,
+        });
+
+        const urlExternal = "https://tutofox.com/foodapp/api.json";
+        return fetch(urlExternal)
+        .then((responseExternal) => responseExternal.json())
+        .then((responseExternalJson) => {
+          this.setState({
+            dataBanner: responseExternalJson.banner
+          });
+
+          const urlCategorys = "https://2ade04a20fa7.ngrok.io/api/access/categorys";
+          return fetch(urlCategorys)
+          .then((responseCategorys) => responseCategorys.json())
+          .then((responseCategorysJson) => {
+            this.setState({
+              categories: responseCategorysJson.data
+            });
+
+            console.log( responseCategorysJson.data);
+            
+          })
+
+
+        })
+        .catch((error) => {
+          console.log(error);
+          
         });
       })
       .catch((error) => {
@@ -65,7 +89,7 @@ export default class App extends Component {
                   resizeMode="contain"
                   source={require("../image/grab.png")}
                 />
-                {/* <View style={{ flex: 1 }}>
+                <View style={{ flex: 1 }}>
           <Swiper style={{height:width/2}}  showsButtons={false} autoplay={true} autoplayTimeout={1}>
             {
               this.state.dataBanner.map((itembann)=>{
@@ -75,7 +99,7 @@ export default class App extends Component {
               })
             }
           </Swiper>
-          </View> */}
+          </View>
                 <View style={{ height: 20 }} />
               </View>
 
@@ -194,8 +218,8 @@ export default class App extends Component {
   }
 
   _renderItemFoods(item) {
-    // let cate = this.state.selectedCategory;
-    // if (cate == 0 || cate == item.categorie) {
+    let cate = this.state.selectedCategory;
+    if (cate == 0 || cate == item.categorie) {
     return (
       <TouchableOpacity
         onPress={() => this._detail(item)}
@@ -239,24 +263,40 @@ export default class App extends Component {
         </TouchableOpacity>
       </TouchableOpacity>
     );
-    // }
+    }
   }
 
-  // _renderItemCategories(item) {
-  //   return (
-  //     <TouchableOpacity
-  //       style={[styles.divCategory, { backgroundColor: item.color }]}
-  //       onPress={() => this.setState({ selectedCategory: item.id })}
-  //     >
-  //       <Image
-  //         style={{ width: 100, height: 100 }}
-  //         resizeMode="contain"
-  //         source={{ uri: item.image }}
-  //       />
-  //       <Text style={{ fontWeight: "bold", fontSize: 15 }}>{item.name}</Text>
-  //     </TouchableOpacity>
-  //   );
-  // }
+  _renderFoodByCategory(idCategory){
+    const url = "https://2ade04a20fa7.ngrok.io/api/access/food:byCategory/" + idCategory;
+    return fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          isLoading: false,
+          foods: responseJson.data,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  _renderItemCategories(item) {
+    return (
+      <TouchableOpacity
+        style={[styles.divCategory, { backgroundColor: item.color }]}
+        // onPress={() => this.setState({ selectedCategory: item.id })}
+        onPress={() => this._renderFoodByCategory(item._id)}
+      >
+        <Image
+          style={{ width: 100, height: 100 }}
+          resizeMode="contain"
+          source={{ uri: item.pathImage }}
+        />
+        <Text style={{ fontWeight: "bold", fontSize: 15 }}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  }
 
   onClickAddCart(data) {
     const itemcart = {
