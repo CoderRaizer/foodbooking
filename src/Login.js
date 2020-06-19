@@ -73,7 +73,7 @@ export default class login extends ValidationComponent {
     //     backgroundColorError: "black",
     //   });
     // } else {
-      fetch("http://dae38e3f286c.ngrok.io/api/auth/login-mobile", {
+      fetch("https://b5f0433e28a1.ngrok.io/api/auth/login-mobile", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",
@@ -86,7 +86,8 @@ export default class login extends ValidationComponent {
         body: JSON.stringify({
           // username: this.state.username,
           // password: this.state.password,
-          email: "vonhuphu@gmail.com",
+          // email: "vonhuphu@gmail.com",
+          username: "vonhuphu@gmail.com",
           password: "123456",
         }),
       })
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 280,
     height: 45,
-    backgroundColor: "red",
+    backgroundColor: "#0450c2",
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",

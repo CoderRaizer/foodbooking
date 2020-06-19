@@ -35,7 +35,7 @@ export default class App extends Component {
   componentDidMount() {
     // const url = "https://tutofox.com/foodapp/api.json";
 
-    const url = "https://dae38e3f286c.ngrok.io/api/access/foods";
+    const url = "https://b5f0433e28a1.ngrok.io/api/access/foods";
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {

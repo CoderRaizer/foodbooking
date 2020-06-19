@@ -33,7 +33,7 @@ export default class Profile extends Component {
           // We have data!!
           const userdata = JSON.parse(user);
           // TODO : Danger zone
-          fetch("https://dae38e3f286c.ngrok.io/api/access/user/" + userdata._id)
+          fetch("https://b5f0433e28a1.ngrok.io/api/access/user/" + userdata._id)
             .then((response) => response.json())
             .then((responseJson) => {
               this.setState({

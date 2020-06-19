@@ -19,98 +19,99 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // TODO : Display data cart
       dataCart: [],
-      dataCartSend: [],
-      isEmptyCart: true,
-
-      itemFoods: [],
-
-      screen: 1,
+      // TODO : list item in cart
+      listItem: [],
+      // TODO : Data confirm checkout
       _idUser: "",
       user: {},
+
       name: "",
       phone: "",
       address: "",
+      // TODO : Error message
       errorName: "",
       errorPhone: "",
       errorAddress: "",
+      // TODO : Support process
       pay: 0,
+      screen: 1,
+      isEmptyCart: true,
     };
   }
   componentDidMount() {
+
+    // TODO : ============================================================== <User Process>
+    AsyncStorage.getItem("User")
+    .then((user) => {
+      if (user !== null) {
+        // We have data!!
+        const userdata = JSON.parse(user);
+        // TODO : Fetch Data User From DataBase
+        fetch("https://b5f0433e28a1.ngrok.io/api/access/user/" + userdata._id)
+          .then((response) => response.json())
+          .then((responseJson) => {
+
+            // TODO: State zone
+            this.setState({
+              _idUser:userdata._id,
+              user: responseJson.data,
+              // TODO : field display
+              name: responseJson.data.name,
+              phone: responseJson.data.phone,
+              address: responseJson.data.address,
+
+              isLoading: false,
+            });
+
+          })
+          .catch((error) => {console.log(error);});
+        console.log(this.state.userData);
+      }
+    })
+    .catch((err) => {alert(err);});
+
+  
+
+    // TODO : ============================================================== <Cart Process>
     AsyncStorage.getItem("cart")
       .then((cart) => {
         if (cart !== null) {
-          // We have data!!
-
           const cartfood = JSON.parse(cart);
-          // this.state.dataCartSend => call
-          // code đây xếp
-          // const itemcart = {
-          //   idFood: cartfood.food._id,
-          //   quantity: cartfood.quantity,
-          // };
           console.log(cartfood);
-          // var singleItem = {
-          //   idFood: "",
-          //   quantity: 0,
-          // };
-          // cartfood.map((element) => {
-          //   singleItem.idFood = element.data.food._id;
-          //   singleItem.quantity = element.data.quantity;
-          //   this.setState({
-          //     itemFoods: this.state.itemFoods.push(singleItem),
-          //   });
-          // });
-
-          // console.log(this.state.itemFoods);
           this.setState({
-            // todo : render item for cart
             dataCart: cartfood,
-
-            // dataCartSend: this.state.dataCartSend.push(itemcart),
           });
 
-          // todo : setup payload body
+          console.log('=========================== CART ASYNC STORAGE =========================');
+          console.log(cartfood);
+          console.log('=========================== CART ASYNC STORAGE =========================');
+          
 
+          cartfood.map(element => {
+            var item = {
+              idFood:element.food._id,
+              quantity:element.quantity
+            }
+            this.state.listItem.push(item);
+          });
+
+          console.log('=========================== CART PAYLOAD DATA ===========================');
+          console.log(this.state.listItem);
+          console.log('=========================== CART PAYLOAD DATA ===========================');
+
+          
           this.state.isEmptyCart = false;
         } else {
           this.state.isEmptyCart = true;
         }
       })
-      .catch((err) => {
-        alert(err);
-      });
-    AsyncStorage.getItem("User")
-      .then((user) => {
-        if (user !== null) {
-          // We have data!!
-          const userdata = JSON.parse(user);
-          // TODO : Danger zone
-          fetch("https://dae38e3f286c.ngrok.io/api/access/user/" + userdata._id)
-            .then((response) => response.json())
-            .then((responseJson) => {
-              this.setState({
-                isLoading: false,
-                user: responseJson.data,
+      .catch((err) => {alert(err);});
 
-                name: responseJson.data.name,
-                phone: responseJson.data.phone,
-                address: responseJson.data.address,
-              });
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-          console.log(this.state.userData);
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
-    // TODO : Fetch Data User From DataBase
+
   }
-
+  // TODO : =========================================================== METHOD
   onChangeQual(i, type) {
     const dataCar = this.state.dataCart;
     let cantd = dataCar[i].quantity;
@@ -177,7 +178,8 @@ export default class Cart extends Component {
     ) {
       this.setState({ errorAddress: "*địa chỉ phải từ 6 - 50 ký tự*" });
     } else {
-      fetch("http://dae38e3f286c.ngrok.io/api/access/order:create", {
+
+      fetch("https://b5f0433e28a1.ngrok.io/api/access/order:create", {
         method: "POST",
         headers: {
           Accept: "application/json, text/plain",
@@ -185,7 +187,7 @@ export default class Cart extends Component {
         },
         body: JSON.stringify({
           userId: this.state._idUser,
-          Itemfood: this.state.dataCartSend,
+          itemFoods: this.state.listItem,
         }),
       })
         .then((response) => response.json())
