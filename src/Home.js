@@ -14,7 +14,9 @@ import Order from "./Order";
 import Cart from "./Cart";
 import Food from "./Food";
 import Profile from "./Profile";
+import Header from "./Header";
 
+import { AsyncStorage } from "react-native";
 var { width } = Dimensions.get("window");
 console.disableYellowBox = true;
 
@@ -23,10 +25,8 @@ export default class Home extends Component {
     super(props);
     this.state = {
       module: 1,
-      // username: "",
     };
   }
-
 
   render() {
     return (
@@ -38,7 +38,34 @@ export default class Home extends Component {
         ) : this.state.module == 3 ? (
           <Order />
         ) : (
-          <Profile />
+          <View style={{ flex: 1 }}>
+            <Header />
+            <View style={{backgroundColor: "#fff"}}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.goBack()}
+                style={{
+                  marginTop: 5,
+                  backgroundColor: "#333",
+                  height: 40,
+                  width: width - 40,
+                  marginLeft: 20,
+                  justifyContent: "center",
+                  textAlign: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
+                  padding: 5,
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <Icon name="md-power" size={30} color="red" />
+                  <Text style={{ marginLeft: 10, fontSize: 25, color: "#fff" }}>
+                    LOGOUT
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <Profile />
+          </View>
         )}
         <View style={styles.bottomTab}>
           <TouchableOpacity
@@ -68,7 +95,7 @@ export default class Home extends Component {
             onPress={() => this.setState({ module: 3 })}
           >
             <Icon
-              name="md-clipboard"
+              name="md-locate"
               size={20}
               color={this.state.module == 3 ? "#1654b8" : "gray"}
             />

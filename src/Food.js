@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import Header from "./Header";
 import Swiper from "react-native-swiper";
 import Icon from "react-native-vector-icons/Ionicons";
 import { AsyncStorage } from "react-native";
@@ -85,6 +86,7 @@ export default class App extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
+            <Header />
         {this.state.screen == 1 ? (
           <ScrollView>
             <View style={styles.container}>
