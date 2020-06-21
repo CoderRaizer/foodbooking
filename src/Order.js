@@ -10,13 +10,14 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import Header from "./Header";
 import Swiper from "react-native-swiper";
 import Icon from "react-native-vector-icons/Ionicons";
 import { AsyncStorage } from "react-native";
 
 var { height, width } = Dimensions.get("window");
 
-export default class App extends Component {
+export default class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -120,6 +121,7 @@ export default class App extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
+            <Header />
         {this.state.lastList == 1 ? (
           <View style={styles.container}>
             <View style={{ height: 20 }} />

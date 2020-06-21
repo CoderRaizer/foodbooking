@@ -12,6 +12,7 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
+import Header from "./Header";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import ValidationComponent from "react-native-form-validator";
@@ -21,9 +22,6 @@ import DropdownAlert from 'react-native-dropdownalert';
 
 var { height, width } = Dimensions.get("window");
 export default class login extends ValidationComponent {
-  static navigationOptions = {
-    header: null,
-  };
   constructor(props) {
     super(props);
     this.state = {
@@ -139,6 +137,7 @@ export default class login extends ValidationComponent {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
+            <Header />
           {/* <ImageBackground
             // resizeMode="contain"
             source={require("./image/food2.png")}
@@ -215,7 +214,7 @@ export default class login extends ValidationComponent {
             </View>
             <TouchableOpacity
               style={styles.btnLogin}
-              onPress={() => this.login()}
+              onPress={() => this._kiemtra()}
             >
               <Text style={styles.login}>Login</Text>
             </TouchableOpacity>

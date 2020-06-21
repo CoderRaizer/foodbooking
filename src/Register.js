@@ -9,6 +9,7 @@ import {
   Keyboard,
   StyleSheet,
 } from "react-native";
+import Header from "./Header";
 
 import { AsyncStorage } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -148,6 +149,7 @@ export default class Register extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
+            <Header />
           <View style={styles.up}>
             <Text
               style={{
